@@ -24,7 +24,7 @@ NUM_EPOCHS = 5
 FEATURES_DISC = 64
 FEATURES_GEN = 64
 
-transforms = transforms.Compose(
+transforms = T.Compose(
 	[
 		T.Resize(IMAGE_SIZE),
 		T.ToTensor(),
@@ -43,9 +43,9 @@ initialize_weights(gen)
 initialize_weights(disc)
 
 opt_gen = optim.Adam(gen.parameters(), lr= LEARNING_RATE, betas=(0.5, 0.999)) #Betas are explicitly changed in the aper, just b1 changes, from 0.9 to 0.5
-opt_discoptim.Adam(disc.parameters(), lr= LEARNING_RATE, betas=(0.5, 0.999)) #Betas are explicitly changed in the aper, just b1 changes, from 0.9 to 0.5
+opt_disc = optim.Adam(disc.parameters(), lr= LEARNING_RATE, betas=(0.5, 0.999)) #Betas are explicitly changed in the aper, just b1 changes, from 0.9 to 0.5
 
-criterion == nn.BCELoss()
+criterion = nn.BCELoss()
 
 fixed_noise = torch.randn(32, Z_DIM, 1, 1).to(device)
 
@@ -60,22 +60,27 @@ for epoch in range(NUM_EPOCHS):
     for batch_idx, (real, _) in enumerate(loader): #the underscore is bcs as dcgan is unsupervised learning we dont need actual labels
         real = real.to(device)
         noise = torch.randn((BATCH_SIZE, Z_DIM, 1, 1)).to(device)
+        fake = gen(noise)
         
         ### Train Discriminator max log(D(x)) + log (1 - D(G(z)))
+        
         disc_real = disc(real).reshape(-1)
         loss_disc_real = criterion(disc_real, torch.ones_like(disc_real))
+        
         disc_fake = disc(fake).reshape(-1)
-        loss_disc_fake = criterion(disc_fake, torch.ones_like(disc_fake))
+        loss_disc_fake = criterion(disc_fake, torch.zeros_like(disc_fake))
+        
         loss_disc = (loss_disc_fake + loss_disc_real) / 2
-        disc.zero_grad()
-        loss_disc.backward()
+        
+        disc.zero_grad() 
+        loss_disc.backward(retain_graph=True)
         opt_disc.step()
         
         ### Train Generator min log(1 - D(G(z))) <-->  max log(D(G(z)))
         output = disc(fake).reshape(-1)
         loss_gen = criterion(output, torch.ones_like(output))
         gen.zero_grad()
-        loss_gen.backward()
+        loss_gen.backward(retain_graph=True)
         opt_gen.step()
         
         #Print losses occasionally and print to tensorboard

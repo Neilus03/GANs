@@ -1,57 +1,65 @@
-# Simple GAN Implementation using PyTorch
-
-## Overview
-
-This repository contains a simple Generative Adversarial Network (GAN) implemented in PyTorch. The GAN is trained on the MNIST dataset to generate handwritten digits.
-
-## Features
-
-- Built using PyTorch.
-- Leverages the `nn.Module` class for building the Generator and Discriminator networks.
-- Uses Binary Cross Entropy loss and the Adam optimizer.
-- Hyperparameters are easily configurable.
-- Logs GAN training in real-time using TensorBoard.
-- Notes on potential improvements in the script comments.
-
-## Installation
-
-You will need Python 3.x and PyTorch installed to run this code. You can install the required packages using pip:
-
 ```
-pip install torch torchvision
-pip install tensorboard
+# README for Your GAN Repository 🚀
+
+---
+
+## Introduction 🌟
+
+Welcome to this fantastic GAN repository where we venture into the mesmerizing world of Generative Adversarial Networks. If you're passionate about GANs, this is the place for you!
+
+---
+
+## Structure 📂
+
+The repository is organized into two main sections:
+
+1. **DCGAN**:
+    - **model.py**: Contains the implementation of the DCGAN model inspired by the paper "Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks". Here you'll find the architectures of both the Discriminator and Generator.
+    - **train.py**: This is where the magic happens! We train our DCGAN on the MNIST dataset. Everything from setting up hyperparameters to initializing data loaders is here.
+
+2. **simple_gan**:
+    - **simple_gan.py**: Looking for something a bit simpler to start with? This file contains a basic GAN implementation using linear layers. It's a great entry point if you're new to GANs. Plus, there are some handy notes on potential improvements and tweaks!
+
+---
+
+## Get Started 🏃
+
+1. Clone the repository:
+   ```
+   git clone <your-repo-link>
+   ```
+
+2. Navigate to the DCGAN folder:
+   ```
+   cd DCGAN
+   ```
+
+3. Train the DCGAN model:
+   ```
+   python train.py
+   ```
+
+4. Or, if you're interested in the simpler GAN, navigate to the simple_gan folder:
+   ```
+   cd simple_gan
+   ```
+
+5. And train the simple GAN:
+   ```
+   python simple_gan.py
+   ```
+
+---
+
+## Contributing 💡
+
+If you have ideas, improvements, or have found bugs, feel free to open an issue or submit a pull request. All contributions are welcome!
+
+---
+
+## Conclusion 🎉
+
+Thanks for stopping by! Dive in, experiment, and have fun with GANs. And remember, the world of deep learning is vast and full of possibilities, so keep exploring!
+
+---
 ```
-
-## Usage
-
-1. Clone the repository to your local machine.
-
-```
-git clone https://github.com/Neilus03/simple_GAN.git
-```
-
-2. Navigate to the project directory.
-
-```
-cd simple_GAN
-```
-
-3. Run the `simple_gan.py` script.
-
-```
-python simple_gan.py
-```
-
-4. To visualize the training process, open TensorBoard with:
-
-```
-tensorboard --logdir=runs
-```
-
-## Contributing
-
-Feel free to submit a pull request if you want to make improvements or fix bugs.
-
-## Acknowledgments
-
-Thanks to the PyTorch team and the creators of the MNIST dataset.

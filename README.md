@@ -1,5 +1,5 @@
 
-# README for Your GAN Repository 🚀
+# GAN Repository 🚀
 
 ---
 

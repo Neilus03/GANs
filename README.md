@@ -1,4 +1,4 @@
-```
+
 # README for Your GAN Repository 🚀
 
 ---
@@ -62,4 +62,4 @@ If you have ideas, improvements, or have found bugs, feel free to open an issue 
 Thanks for stopping by! Dive in, experiment, and have fun with GANs. And remember, the world of deep learning is vast and full of possibilities, so keep exploring!
 
 ---
-```
+

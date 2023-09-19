@@ -24,7 +24,7 @@ def gradient_penalty(critic, real, fake, device="cpu"):
     return gradient_penalty
 
 
-def save_checkpoint(state, filename="celeba_wgan_gp.pth.tar"):
+def save_checkpoint(state, filename="mnist_wgan_gp.pth.tar"):
     print("=> Saving checkpoint")
     torch.save(state, filename)
 

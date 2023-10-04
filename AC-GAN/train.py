@@ -2,6 +2,20 @@ import torch
 import torch.nn.functional as F
 from torch.autograd import Variable
 from model import Generator, Discriminator
+from dataloader import EGDDataset
+from torch.utils.data import DataLoader
+from torchvision import transforms
+
+# Define your transformations
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+
+# Create dataset instance
+dataset = EGDDataset(image_folder="/content/drive/MyDrive/EGD-Barcelona/merged/all_images_mean_cropped", 
+                     label_file="/content/drive/MyDrive/EGD-Barcelona/merged/full_well.xlsx", 
+                     transform=transform)
 
 # Hyperparameters
 batch_size = 16
@@ -23,8 +37,8 @@ optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=lr)
 adversarial_loss = torch.nn.BCELoss()
 auxiliary_loss = torch.nn.CrossEntropyLoss()
 
-# Load your data here as train_loader
-# train_loader = ...
+# Load data here as train_loader
+train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
 
 # Training
 for epoch in range(num_epochs):

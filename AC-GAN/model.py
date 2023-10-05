@@ -31,7 +31,7 @@ class Generator(nn.Module):
         self.fc = nn.Linear(noise_dim + class_dim, 512 * 70 * 80)
         
         self.model = nn.Sequential(
-            nn.ConvTranspose2d(512, 512, kernel_size=(70, 80)),  # Fixed this line
+            nn.ConvTranspose2d(512, 512, kernel_size=(70, 80)), 
             nn.BatchNorm2d(512),
             nn.ReLU(True),
             
@@ -78,7 +78,7 @@ class Discriminator(nn.Module):
         )
         
         self.classifier = nn.Sequential(
-            nn.Linear(512 * 35 * 40, 512),  # Adapt these dimensions
+            nn.Linear(512 * 35 * 40, 512),
             nn.LeakyReLU(0.2),
             nn.Linear(512, class_dim),
             nn.Softmax(dim=1)

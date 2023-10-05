@@ -30,7 +30,7 @@ class Generator(nn.Module):
         super(Generator, self).__init__()
         
         self.model = nn.Sequential(
-            nn.ConvTranspose2d(noise_dim + class_dim, 512, kernel_size=(70, 80)),  # Adapt these dimensions
+            nn.ConvTranspose2d(noise_dim + class_dim, 512, kernel_size=(70, 80)), 
             nn.BatchNorm2d(512),
             nn.ReLU(True),
             

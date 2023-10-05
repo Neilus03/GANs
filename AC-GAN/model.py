@@ -72,7 +72,6 @@ class Discriminator(nn.Module):
             nn.LeakyReLU(0.2),
             
             nn.Conv2d(512, 1, kernel_size=4, stride=1, padding=0),
-            nn.Sigmoid()
         )
         
         self.classifier = nn.Sequential(

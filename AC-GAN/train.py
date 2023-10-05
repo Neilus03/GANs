@@ -1,8 +1,8 @@
 import torch
 import torch.nn.functional as F
 from torch.autograd import Variable
-from model import Generator, Discriminator
-from dataloader import EGD_GAN_Dataset  
+from model6 import Generator, Discriminator
+from dataloader_gan import EGD_GAN_Dataset  
 from torch.utils.data import DataLoader
 from torchvision import transforms
 
@@ -17,45 +17,65 @@ dataset = EGD_GAN_Dataset(root_folder="/content/drive/MyDrive/EGD-Barcelona/spli
                      transform=transform)  
 
 # Hyperparameters
-batch_size = 16
-lr = 0.0002
+batch_size = 4
+lr = 3e-4
 noise_dim = 100
 class_dim = 3 
 num_epochs = 200
 
+# Initialize device
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 # Initialize models
-generator = Generator(noise_dim, class_dim)
-discriminator = Discriminator(class_dim)  
+generator = Generator(noise_dim, class_dim).to(device)
+discriminator = Discriminator(class_dim).to(device)
 
 # Optimizers
 optimizer_G = torch.optim.Adam(generator.parameters(), lr=lr)
 optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=lr)
 
 # Loss functions
-adversarial_loss = torch.nn.BCELoss()
-auxiliary_loss = torch.nn.CrossEntropyLoss()
+adversarial_loss = torch.nn.BCELoss().to(device)
+auxiliary_loss = torch.nn.CrossEntropyLoss().to(device)
 
 # Load data here as train_loader
-train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)  
+train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 # Training
 for epoch in range(num_epochs):
     for i, (imgs, labels) in enumerate(train_loader):
-        valid = Variable(torch.FloatTensor(batch_size, 1).fill_(1.0), requires_grad=False)
-        fake = Variable(torch.FloatTensor(batch_size, 1).fill_(0.0), requires_grad=False)
+        
+        # Move data to the device
+        imgs = imgs.to(device)
+        labels = labels.to(device)
 
-        real_imgs = Variable(imgs.type(torch.FloatTensor))
-        labels = Variable(labels.type(torch.LongTensor))
+        valid = Variable(torch.FloatTensor(batch_size, 1).fill_(1.0), requires_grad=False).to(device)
+        fake = Variable(torch.FloatTensor(batch_size, 1).fill_(0.0), requires_grad=False).to(device)
+
+        real_imgs = Variable(imgs.type(torch.FloatTensor)).to(device)
+        labels = Variable(labels.type(torch.LongTensor)).to(device)
+        
+        print("After Variable Conversion:")
+        print(f"real_imgs shape: {real_imgs.shape}")
+        print(f"labels shape: {labels.shape}")
 
         # Train Generator
         optimizer_G.zero_grad()
 
-        noise = Variable(torch.FloatTensor(torch.randn(batch_size, noise_dim)))
-        gen_labels = Variable(torch.LongTensor(torch.randint(0, class_dim, (batch_size,))))
+        noise = Variable(torch.FloatTensor(torch.randn(batch_size, noise_dim, 1, 1))).to(device)
+        print(f"Noise shape: {noise.shape}")
+        
+        gen_labels = Variable(torch.LongTensor(torch.randint(0, class_dim, (batch_size,)))).to(device)
+        print(f"gen_labels shape: {gen_labels.shape}")
+        
         gen_labels_onehot = F.one_hot(gen_labels, num_classes=class_dim).float()
+        print(f"gen_labels_onehot shape: {gen_labels_onehot.shape}")
 
         gen_imgs = generator(noise, gen_labels_onehot)
+        print(f"Generated Images shape: {gen_imgs.shape}")
+
         validity, pred_label = discriminator(gen_imgs)
+        print(f"Discriminator validity shape: {validity.shape}, pred_label shape: {pred_label.shape}")
 
         g_loss = adversarial_loss(validity, valid) + auxiliary_loss(pred_label, gen_labels)
 

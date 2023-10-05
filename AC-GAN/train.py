@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch.autograd import Variable
 from model import Generator, Discriminator
-from dataloader import EGDDataset
+from dataloader import EGD_GAN_Dataset  
 from torch.utils.data import DataLoader
 from torchvision import transforms
 
@@ -13,21 +13,19 @@ transform = transforms.Compose([
 ])
 
 # Create dataset instance
-dataset = EGDDataset(image_folder="/content/drive/MyDrive/EGD-Barcelona/merged/all_images_mean_cropped", 
-                     label_file="/content/drive/MyDrive/EGD-Barcelona/merged/full_well.xlsx", 
-                     transform=transform)
+dataset = EGD_GAN_Dataset(root_folder="/content/drive/MyDrive/EGD-Barcelona/split_by_label/train",
+                     transform=transform)  
 
 # Hyperparameters
 batch_size = 16
 lr = 0.0002
 noise_dim = 100
-class_dim = 3  # Number of classes
-image_shape = 560 * 640 * 3  # Flatten the images
+class_dim = 3 
 num_epochs = 200
 
 # Initialize models
-generator = Generator(noise_dim, class_dim, image_shape)
-discriminator = Discriminator(image_shape, class_dim)
+generator = Generator(noise_dim, class_dim)
+discriminator = Discriminator(class_dim)  
 
 # Optimizers
 optimizer_G = torch.optim.Adam(generator.parameters(), lr=lr)
@@ -38,7 +36,7 @@ adversarial_loss = torch.nn.BCELoss()
 auxiliary_loss = torch.nn.CrossEntropyLoss()
 
 # Load data here as train_loader
-train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
+train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)  
 
 # Training
 for epoch in range(num_epochs):
@@ -79,4 +77,3 @@ for epoch in range(num_epochs):
         optimizer_D.step()
 
     print(f"[Epoch {epoch}/{num_epochs}] [D loss: {d_loss.item()}] [G loss: {g_loss.item()}]")
-

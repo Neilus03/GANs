@@ -47,9 +47,10 @@ class Generator(nn.Module):
         )
 
     def forward(self, noise, labels):
-        x = torch.cat([noise, labels], dim=1)
+        noise = noise.view(noise.size(0), -1)  # Flattening the noise tensor
+        x = torch.cat([noise, labels], dim=1)  # Now, noise and labels have the same number of dimensions
         x = self.fc(x)
-        x = x.view(x.size(0), 512, 70, 80)
+        x = x.view(x.size(0), 512, 70, 80)  # Reshape back to 4D tensor
         return self.model(x)
 
 class Discriminator(nn.Module):

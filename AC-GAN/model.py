@@ -44,7 +44,7 @@ class Generator(nn.Module):
             nn.ReLU(True),
             
             # Adding self-attention mechanism
-            SelfAttention(512),
+            #SelfAttention(512), let it commented for easier computation while trying to know if matches sizes
             
             nn.ConvTranspose2d(512, 256, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(256),
@@ -83,7 +83,7 @@ class Discriminator(nn.Module):
             nn.LeakyReLU(0.2),
             
             # Adding self-attention mechanism
-            SelfAttention(128),
+            #SelfAttention(128), let it commented for easier computation while trying to know if matches sizes
             
             nn.Conv2d(128, 256, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(256),

@@ -28,6 +28,8 @@ class SelfAttention(nn.Module):
 class Generator(nn.Module):
     def __init__(self, noise_dim, class_dim):
         super(Generator, self).__init__()
+
+        self.fc = nn.Linear(noise_dim + class_dim, 512*70*80)
         
         self.model = nn.Sequential(
             nn.ConvTranspose2d(noise_dim + class_dim, 512, kernel_size=(70, 80)), 
@@ -47,6 +49,8 @@ class Generator(nn.Module):
 
     def forward(self, noise, labels):
         x = torch.cat([noise, labels], 1)
+        x = self.fc(x)
+        x = x.view(x.size(0), 512, 70, 80)  # Reshape to [batch_size, num_channels, height, width]
         return self.model(x)
 
 class Discriminator(nn.Module):

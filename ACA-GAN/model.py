@@ -107,7 +107,8 @@ class Discriminator(nn.Module):
     def forward(self, x):
         # Calculate the validity score of the image
         validity = self.discriminator(x)
-        
+        print("Shape after Discriminator conv layers:", validity.shape)
+
         # Flatten for the classifier
         validity = validity.view(validity.size(0), -1)
         

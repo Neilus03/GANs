@@ -38,8 +38,8 @@ class Generator(nn.Module):
         self.fc = nn.Linear(noise_dim + class_dim, 512 * 35 * 40)  # Output: [B, 512 * 35 * 40]
         
         # Generator's architecture
-        self.model = nn.Sequential(
-            nn.ConvTranspose2d(512, 256, kernel_size=4, stride=2, padding=1) # [B, 256, 70, 80]
+        self.generator = nn.Sequential(
+            nn.ConvTranspose2d(512, 256, kernel_size=4, stride=2, padding=1), # [B, 256, 70, 80]
             nn.BatchNorm2d(256),  # [B, 256, 70, 80]
             nn.ReLU(True),  # [B, 256, 70, 80]
             
@@ -73,7 +73,7 @@ class Generator(nn.Module):
         x = self.fc(x)  #  [N, 512 * 35 * 40]
         x = x.view(x.size(0), 512, 35, 40)  # [B, 512, 35, 40]
         # Generate the image
-        x = self.model(x)  # [B, 3, 560, 640]
+        x = self.generator(x)  # [B, 3, 560, 640]
         return x
 
 class Discriminator(nn.Module):
@@ -109,14 +109,14 @@ class Discriminator(nn.Module):
             SelfAttention(512),  # [B, 512 * 35 * 40] # let it commented for easier computation while trying to know if matches sizes
             
             
-            nn.Conv2d(512, 1, kernel_size=4, stride=1, padding=0), # [B, 512 * 31 * 36]
+            nn.Conv2d(512, 1, kernel_size=4, stride=1, padding=0) # [B, 512 * 31 * 36]
         )
         
         # Classifier to determine the class of the image
         self.classifier = nn.Sequential(
             nn.Linear (31*36, 512), #as the output from discriminator before flattening is: ([B, 1, 31, 36])
             nn.LeakyReLU(0.2),
-            nn.Linear(512, class_dim),
+            nn.Linear(512, class_dim)
         )
 
     def forward(self, x):
@@ -133,3 +133,32 @@ class Discriminator(nn.Module):
         label = self.classifier(validity_flat) #[B, 1, 1]
         
         return validity_avg, label
+
+
+#TESTING AND DEBUGGING
+
+if __name__ == "__main__":
+    # Define dimensions and hyperparameters
+    noise_dim = 100
+    class_dim = 10
+    batch_size = 16
+
+    # Initialize models
+    generator = Generator(noise_dim, class_dim)
+    discriminator = Discriminator(class_dim)
+
+    # Create fake data
+    fake_noise = torch.randn(batch_size, noise_dim)  # Noise for the generator
+    fake_labels = torch.randint(0, class_dim, (batch_size,))  # Random labels
+    fake_labels_onehot = torch.nn.functional.one_hot(fake_labels, class_dim).float()  # One-hot encoding
+
+    fake_images = torch.randn(batch_size, 3, 560, 640)  # Fake images to feed the discriminator
+
+    # Forward pass through the generator
+    generated_images = generator(fake_noise, fake_labels_onehot)
+    print(f"Generated images shape: {generated_images.shape}")  # Should be [batch_size, 3, 560, 640]
+
+    # Forward pass through the discriminator
+    validity, label = discriminator(fake_images)
+    print(f"Validity shape: {validity.shape}")  # Should be [batch_size, 1, 1, 1]
+    print(f"Label shape: {label.shape}")  # Should be [batch_size, class_dim]

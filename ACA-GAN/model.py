@@ -39,24 +39,23 @@ class Generator(nn.Module):
         
         # Generator's architecture
         self.model = nn.Sequential(
-            nn.ConvTranspose2d(512, 256, kernel_size=4, stride=2, padding=1) # [B, 512, 70, 80]
+            nn.ConvTranspose2d(512, 256, kernel_size=4, stride=2, padding=1) # [B, 256, 70, 80]
             nn.BatchNorm2d(256),  # [B, 256, 70, 80]
             nn.ReLU(True),  # [B, 256, 70, 80]
             
+            SelfAttention(256),  #  [B, 256, 70, 80] , let it commented for easier computation while trying to know if matches sizes
             
-            SelfAttention(256),  #  [B, 256, 70, 80]
-            
-            nn.ConvTranspose2d(256, 128, kernel_size=4, stride=2, padding=1),  #[B, 128, 140, 160]
+            nn.ConvTranspose2d(256, 128, kernel_size=4, stride=2, padding=1),  #[B, 128, 140, 160] 
             nn.BatchNorm2d(128),  #[B, 128, 140, 160]
             nn.ReLU(True),  # [B, 128, 140, 160]
 
-            SelfAttention(128),  #  [B, 128, 140, 160]
+            SelfAttention(128),  #  [B, 128, 140, 160] , let it commented for easier computation while trying to know if matches sizes
             
-            nn.ConvTranspose2d(128, 64, kernel_size=4, stride=2, padding=1),  # [B, 64, 280, 320]
-            nn.BatchNorm2d(128)
+            nn.ConvTranspose2d(128, 64, kernel_size=4, stride=2, padding=1),  # [B, 64, 280, 320] 
+            nn.BatchNorm2d(64), # [B, 64, 280, 320]
             nn.ReLU(True),  # [B, 64, 280, 320]
 
-            SelfAttention(64),  # [B, 64, 280, 320]
+            SelfAttention(64),  # [B, 64, 280, 320] , let it commented for easier computation while trying to know if matches sizes
             
             #Last layer 
             nn.ConvTranspose2d(64, 3, kernel_size=4, stride=2, padding=1),  # [B, 3, 560, 640]
@@ -72,7 +71,7 @@ class Generator(nn.Module):
         
         # Pass through the fully connected layer and reshape
         x = self.fc(x)  #  [N, 512 * 35 * 40]
-        x = x.view(x.size(0), 512, 35, 40)  # [B, 512, 70, 80]
+        x = x.view(x.size(0), 512, 35, 40)  # [B, 512, 35, 40]
         # Generate the image
         x = self.model(x)  # [B, 3, 560, 640]
         return x
@@ -80,47 +79,57 @@ class Generator(nn.Module):
 class Discriminator(nn.Module):
     def __init__(self, class_dim):
         super(Discriminator, self).__init__()
+
+        # We´ll apply GAP at the end so it must be instantiated.
+        self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
         
         # Discriminator's architecture
         self.discriminator = nn.Sequential(
-            nn.Conv2d(3, 64, kernel_size=4, stride=2, padding=1),  
-            nn.LeakyReLU(0.2),
+            nn.Conv2d(3, 64, kernel_size=4, stride=2, padding=1), # [B, 64, 280, 320]  
+            nn.BatchNorm2d(64),  # [B, 64, 280, 320]   #comment or uncomment batch norm of discriminator based on experiments
+            nn.LeakyReLU(0.2), # [B, 64, 280, 320] 
+            SelfAttention(64),  # [B, 64, 280, 320]   # let it commented for easier computation while trying to know if matches sizes
             
-            nn.Conv2d(64, 128, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(128),
-            nn.LeakyReLU(0.2),
+            nn.Conv2d(64, 128, kernel_size=4, stride=2, padding=1), #[B, 128, 140, 160] 
+            nn.BatchNorm2d(128), #[B, 128, 140, 160]  #comment or uncomment batch norm of discriminator based on experiments
+            nn.LeakyReLU(0.2), #[B, 128, 140, 160] 
             
-            # Adding self-attention mechanism
-            #SelfAttention(128), let it commented for easier computation while trying to know if matches sizes
+            SelfAttention(128), #[B, 128, 140, 160] # let it commented for easier computation while trying to know if matches sizes
             
-            nn.Conv2d(128, 256, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(256),
-            nn.LeakyReLU(0.2),
+            nn.Conv2d(128, 256, kernel_size=4, stride=2, padding=1),  # [B, 256, 70, 80]
+            nn.BatchNorm2d(256), # [B, 256, 70, 80]  #comment or uncomment batch norm of discriminator based on experiments
+            nn.LeakyReLU(0.2), # [B, 256, 70, 80]
+
+            SelfAttention(256), # [B, 256, 70, 80] # let it commented for easier computation while trying to know if matches sizes
             
-            nn.Conv2d(256, 512, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(512),
-            nn.LeakyReLU(0.2),
+            nn.Conv2d(256, 512, kernel_size=4, stride=2, padding=1), # [B, 512 * 35 * 40]
+            nn.BatchNorm2d(512),  # [B, 512 * 35 * 40]  #comment or uncomment batch norm of discriminator based on experiments
+            nn.LeakyReLU(0.2),  # [B, 512 * 35 * 40]
+
+            SelfAttention(512),  # [B, 512 * 35 * 40] # let it commented for easier computation while trying to know if matches sizes
             
-            nn.Conv2d(512, 1, kernel_size=4, stride=1, padding=0),
+            
+            nn.Conv2d(512, 1, kernel_size=4, stride=1, padding=0), # [B, 512 * 31 * 36]
         )
         
         # Classifier to determine the class of the image
         self.classifier = nn.Sequential(
-            nn.Linear (31*36, 512), #as the output from discriminator before flattening is: ([4, 1, 31, 36])
+            nn.Linear (31*36, 512), #as the output from discriminator before flattening is: ([B, 1, 31, 36])
             nn.LeakyReLU(0.2),
             nn.Linear(512, class_dim),
-            nn.Softmax(dim=1)
         )
 
     def forward(self, x):
         # Calculate the validity score of the image
-        validity = self.discriminator(x)
-        print("Shape after Discriminator conv layers:", validity.shape)
-
+        validity = self.discriminator(x) #[B, 1, 31, 36]
+    
+        # Perform global average pooling over the validity feature map
+        validity_avg = self.global_avg_pool(validity) #[B, 1, 1, 1]
+        
         # Flatten for the classifier
-        validity = validity.view(validity.size(0), -1)
+        validity_flat = validity.view(validity.size(0), -1) #[B, 1, 31*36] == [B, 1, 1116]
         
         # Classify the image
-        label = self.classifier(validity)
+        label = self.classifier(validity_flat) #[B, 1, 1]
         
-        return validity, label
+        return validity_avg, label

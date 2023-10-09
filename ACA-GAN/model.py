@@ -98,7 +98,7 @@ class Discriminator(nn.Module):
         
         # Classifier to determine the class of the image
         self.classifier = nn.Sequential(
-            nn.Linear(512 * 35 * 40, 512),
+            nn.Linear (31*36, 512), #as the output from discriminator before flattening is: ([4, 1, 31, 36])
             nn.LeakyReLU(0.2),
             nn.Linear(512, class_dim),
             nn.Softmax(dim=1)

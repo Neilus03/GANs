@@ -43,19 +43,19 @@ class Generator(nn.Module):
             nn.BatchNorm2d(256),  # [B, 256, 70, 80]
             nn.ReLU(True),  # [B, 256, 70, 80]
             
-            SelfAttention(256),  #  [B, 256, 70, 80] , let it commented for easier computation while trying to know if matches sizes
+            #SelfAttention(256),  #  [B, 256, 70, 80] , let it commented for easier computation while trying to know if matches sizes
             
             nn.ConvTranspose2d(256, 128, kernel_size=4, stride=2, padding=1),  #[B, 128, 140, 160] 
             nn.BatchNorm2d(128),  #[B, 128, 140, 160]
             nn.ReLU(True),  # [B, 128, 140, 160]
 
-            SelfAttention(128),  #  [B, 128, 140, 160] , let it commented for easier computation while trying to know if matches sizes
+            #SelfAttention(128),  #  [B, 128, 140, 160] , let it commented for easier computation while trying to know if matches sizes
             
             nn.ConvTranspose2d(128, 64, kernel_size=4, stride=2, padding=1),  # [B, 64, 280, 320] 
             nn.BatchNorm2d(64), # [B, 64, 280, 320]
             nn.ReLU(True),  # [B, 64, 280, 320]
 
-            SelfAttention(64),  # [B, 64, 280, 320] , let it commented for easier computation while trying to know if matches sizes
+            #SelfAttention(64),  # [B, 64, 280, 320] , let it commented for easier computation while trying to know if matches sizes
             
             #Last layer 
             nn.ConvTranspose2d(64, 3, kernel_size=4, stride=2, padding=1),  # [B, 3, 560, 640]
@@ -88,46 +88,47 @@ class Discriminator(nn.Module):
             nn.Conv2d(3, 64, kernel_size=4, stride=2, padding=1), # [B, 64, 280, 320]  
             nn.BatchNorm2d(64),  # [B, 64, 280, 320]   #comment or uncomment batch norm of discriminator based on experiments
             nn.LeakyReLU(0.2), # [B, 64, 280, 320] 
-            SelfAttention(64),  # [B, 64, 280, 320]   # let it commented for easier computation while trying to know if matches sizes
+            
+            #SelfAttention(64),  # [B, 64, 280, 320]   # let it commented for easier computation while trying to know if matches sizes
             
             nn.Conv2d(64, 128, kernel_size=4, stride=2, padding=1), #[B, 128, 140, 160] 
             nn.BatchNorm2d(128), #[B, 128, 140, 160]  #comment or uncomment batch norm of discriminator based on experiments
             nn.LeakyReLU(0.2), #[B, 128, 140, 160] 
             
-            SelfAttention(128), #[B, 128, 140, 160] # let it commented for easier computation while trying to know if matches sizes
+            #SelfAttention(128), #[B, 128, 140, 160] # let it commented for easier computation while trying to know if matches sizes
             
             nn.Conv2d(128, 256, kernel_size=4, stride=2, padding=1),  # [B, 256, 70, 80]
             nn.BatchNorm2d(256), # [B, 256, 70, 80]  #comment or uncomment batch norm of discriminator based on experiments
             nn.LeakyReLU(0.2), # [B, 256, 70, 80]
 
-            SelfAttention(256), # [B, 256, 70, 80] # let it commented for easier computation while trying to know if matches sizes
+            #SelfAttention(256), # [B, 256, 70, 80] # let it commented for easier computation while trying to know if matches sizes
             
             nn.Conv2d(256, 512, kernel_size=4, stride=2, padding=1), # [B, 512 * 35 * 40]
             nn.BatchNorm2d(512),  # [B, 512 * 35 * 40]  #comment or uncomment batch norm of discriminator based on experiments
             nn.LeakyReLU(0.2),  # [B, 512 * 35 * 40]
 
-            SelfAttention(512),  # [B, 512 * 35 * 40] # let it commented for easier computation while trying to know if matches sizes
+            #SelfAttention(512),  # [B, 512 * 35 * 40] # let it commented for easier computation while trying to know if matches sizes
             
             
-            nn.Conv2d(512, 1, kernel_size=4, stride=1, padding=0) # [B, 512 * 31 * 36]
+            nn.Conv2d(512, 1, kernel_size=4, stride=1, padding=0) # [B, 512 * 32 * 37]
         )
         
         # Classifier to determine the class of the image
         self.classifier = nn.Sequential(
-            nn.Linear (31*36, 512), #as the output from discriminator before flattening is: ([B, 1, 31, 36])
+            nn.Linear (32*37, 512), #as the output from discriminator before flattening is: ([B, 1, 31, 36])
             nn.LeakyReLU(0.2),
             nn.Linear(512, class_dim)
         )
 
     def forward(self, x):
         # Calculate the validity score of the image
-        validity = self.discriminator(x) #[B, 1, 31, 36]
+        validity = self.discriminator(x) #[B, 1, 32, 37]
     
         # Perform global average pooling over the validity feature map
         validity_avg = self.global_avg_pool(validity) #[B, 1, 1, 1]
         
         # Flatten for the classifier
-        validity_flat = validity.view(validity.size(0), -1) #[B, 1, 31*36] == [B, 1, 1116]
+        validity_flat = validity.view(validity.size(0), -1) #[B, 1, 32*37] == [B, 1, 1184]
         
         # Classify the image
         label = self.classifier(validity_flat) #[B, 1, 1]
@@ -136,12 +137,22 @@ class Discriminator(nn.Module):
 
 
 #TESTING AND DEBUGGING
+import matplotlib.pyplot as plt
+def plot_images(images, num_images=8):
+    fig = plt.figure(figsize=(14, 14))
+    for i in range(num_images):
+        ax = fig.add_subplot(1, num_images, i+1)
+        ax.axis("off")
+        img = images[i].detach().cpu().numpy().transpose(1, 2, 0)
+        img = (img + 1) / 2  # Rescale pixel values from [-1, 1] to [0, 1]
+        plt.imshow(img)
+    plt.show()
 
 if __name__ == "__main__":
     # Define dimensions and hyperparameters
     noise_dim = 100
-    class_dim = 10
-    batch_size = 16
+    class_dim = 3
+    batch_size = 8
 
     # Initialize models
     generator = Generator(noise_dim, class_dim)
@@ -157,6 +168,9 @@ if __name__ == "__main__":
     # Forward pass through the generator
     generated_images = generator(fake_noise, fake_labels_onehot)
     print(f"Generated images shape: {generated_images.shape}")  # Should be [batch_size, 3, 560, 640]
+
+    # Plot generated images
+    plot_images(generated_images)
 
     # Forward pass through the discriminator
     validity, label = discriminator(fake_images)

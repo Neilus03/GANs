@@ -34,40 +34,48 @@ class Generator(nn.Module):
     def __init__(self, noise_dim, class_dim):
         super(Generator, self).__init__()
         
-        # Fully connected layer to upscale the concatenated noise and label vectors
-        self.fc = nn.Linear(noise_dim + class_dim, 512 * 70 * 80)
+        # Fully connected layer
+        self.fc = nn.Linear(noise_dim + class_dim, 512 * 35 * 40)  # Output: [B, 512 * 35 * 40]
         
         # Generator's architecture
         self.model = nn.Sequential(
-            nn.ConvTranspose2d(512, 512, kernel_size=(70, 80)), 
-            nn.BatchNorm2d(512),
-            nn.ReLU(True),
+            nn.ConvTranspose2d(512, 256, kernel_size=4, stride=2, padding=1) # [B, 512, 70, 80]
+            nn.BatchNorm2d(256),  # [B, 256, 70, 80]
+            nn.ReLU(True),  # [B, 256, 70, 80]
             
-            # Adding self-attention mechanism
-            #SelfAttention(512), let it commented for easier computation while trying to know if matches sizes
             
-            nn.ConvTranspose2d(512, 256, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(256),
-            nn.ReLU(True),
+            SelfAttention(256),  #  [B, 256, 70, 80]
             
-            # Final layer to generate the image
-            nn.ConvTranspose2d(256, 3, kernel_size=4, stride=2, padding=1),
-            nn.Tanh()
+            nn.ConvTranspose2d(256, 128, kernel_size=4, stride=2, padding=1),  #[B, 128, 140, 160]
+            nn.BatchNorm2d(128),  #[B, 128, 140, 160]
+            nn.ReLU(True),  # [B, 128, 140, 160]
+
+            SelfAttention(128),  #  [B, 128, 140, 160]
+            
+            nn.ConvTranspose2d(128, 64, kernel_size=4, stride=2, padding=1),  # [B, 64, 280, 320]
+            nn.BatchNorm2d(128)
+            nn.ReLU(True),  # [B, 64, 280, 320]
+
+            SelfAttention(64),  # [B, 64, 280, 320]
+            
+            #Last layer 
+            nn.ConvTranspose2d(64, 3, kernel_size=4, stride=2, padding=1),  # [B, 3, 560, 640]
+            nn.Tanh()  # Output: [B, 3, 560, 640] in range [-1,1]
         )
 
     def forward(self, noise, labels):
         # Flatten the noise tensor
-        noise = noise.view(noise.size(0), -1)
+        noise = noise.view(noise.size(0), -1)  # [B, noise_dim]
         
         # Concatenate noise and label tensors
-        x = torch.cat([noise, labels], dim=1)
+        x = torch.cat([noise, labels], dim=1)  # [B, noise_dim + class_dim]
         
         # Pass through the fully connected layer and reshape
-        x = self.fc(x)
-        x = x.view(x.size(0), 512, 70, 80)
-        
+        x = self.fc(x)  #  [N, 512 * 35 * 40]
+        x = x.view(x.size(0), 512, 35, 40)  # [B, 512, 70, 80]
         # Generate the image
-        return self.model(x)
+        x = self.model(x)  # [B, 3, 560, 640]
+        return x
 
 class Discriminator(nn.Module):
     def __init__(self, class_dim):

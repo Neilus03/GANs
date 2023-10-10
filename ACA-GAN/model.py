@@ -73,8 +73,8 @@ class Generator(nn.Module):
         x = self.fc(x)  #  [N, 512 * 35 * 40]
         x = x.view(x.size(0), 512, 35, 40)  # [B, 512, 35, 40]
         # Generate the image
-        x = self.generator(x)  # [B, 3, 560, 640]
-        return x
+        generated_img = self.generator(x)  # [B, 3, 560, 640]
+        return generated_img
 
 class Discriminator(nn.Module):
     def __init__(self, class_dim):

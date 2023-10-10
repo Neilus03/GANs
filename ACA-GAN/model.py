@@ -71,9 +71,13 @@ class Generator(nn.Module):
         
         # Pass through the fully connected layer and reshape
         x = self.fc(x)  #  [N, 512 * 35 * 40]
+        print(f"After fc layer, shape of x: {x.shape}")
+        
         x = x.view(x.size(0), 512, 35, 40)  # [B, 512, 35, 40]
+        print(f"After view reshape, shape of x: {x.shape}")
         # Generate the image
         generated_img = self.generator(x)  # [B, 3, 560, 640]
+        print(f"shape of the generated img: {generated_img.shape}")
         return generated_img
 
 class Discriminator(nn.Module):
@@ -121,20 +125,22 @@ class Discriminator(nn.Module):
         )
 
     def forward(self, x):
+        print(f"Before discriminator, shape of x: {x.shape}")  # Debugging print
         # Calculate the validity score of the image
         validity = self.discriminator(x) #[B, 1, 32, 37]
-    
+
+        print(f"After discriminator, shape of validity: {validity.shape}")  # Debugging print
         # Perform global average pooling over the validity feature map
         validity_avg = self.global_avg_pool(validity) #[B, 1, 1, 1]
-        
+        print(f"After global average pooling, shape of validity_avg: {validity_avg.shape}")  # Debugging print        
         # Flatten for the classifier
         validity_flat = validity.view(validity.size(0), -1) #[B, 1, 32*37] == [B, 1184]
-        
+        print(f"After flattening, shape of validity_flat: {validity_flat.shape}")  # Debugging print
         # Classify the image
         label = self.classifier(validity_flat) #[B, 3]
+        print(f"After classifier, shape of label: {label.shape}") 
         
         return validity_avg, label
-
 
 #TESTING AND DEBUGGING
 import matplotlib.pyplot as plt

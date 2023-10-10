@@ -117,7 +117,7 @@ class Discriminator(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear (32*37, 512), #as the output from discriminator before flattening is: ([B, 1, 31, 36])
             nn.LeakyReLU(0.2),
-            nn.Linear(512, class_dim)
+            nn.Linear(512, class_dim) #[B, 3]
         )
 
     def forward(self, x):
@@ -128,10 +128,10 @@ class Discriminator(nn.Module):
         validity_avg = self.global_avg_pool(validity) #[B, 1, 1, 1]
         
         # Flatten for the classifier
-        validity_flat = validity.view(validity.size(0), -1) #[B, 1, 32*37] == [B, 1, 1184]
+        validity_flat = validity.view(validity.size(0), -1) #[B, 1, 32*37] == [B, 1184]
         
         # Classify the image
-        label = self.classifier(validity_flat) #[B, 1, 1]
+        label = self.classifier(validity_flat) #[B, 3]
         
         return validity_avg, label
 

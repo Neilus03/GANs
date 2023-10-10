@@ -87,6 +87,11 @@ class Discriminator(nn.Module):
         # We´ll apply GAP at the end so it must be instantiated.
         self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
         
+        #We´ll applied the sigmoid to validity as in training
+        #it will use BCE loss which doesnt include sigmoid, unlike
+        #general cross entropy loss
+        self.sigmoid = nn.Sigmoid()
+        
         # Discriminator's architecture
         self.discriminator = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=4, stride=2, padding=1), # [B, 64, 280, 320]  
@@ -140,6 +145,8 @@ class Discriminator(nn.Module):
         label = self.classifier(validity_flat) #[B, 3]
         print(f"After classifier, shape of label: {label.shape}") 
         
+        validity_avg = self.sigmoid(validity_avg)
+
         return validity_avg, label
 
 #TESTING AND DEBUGGING

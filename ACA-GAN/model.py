@@ -88,9 +88,9 @@ class Discriminator(nn.Module):
         # We´ll apply GAP at the end so it must be instantiated.
         self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
         
-        #We´ll applied the sigmoid to validity as in training
-        #it will use BCE loss which doesnt include sigmoid, unlike
-        #general cross entropy loss
+        #We´ll apply the sigmoid to validity as in training
+        #it will use BCE loss which doesn't include sigmoid, unlike
+        #general cross-entropy loss
         self.sigmoid = nn.Sigmoid()
         
         # Discriminator's architecture

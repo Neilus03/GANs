@@ -48,7 +48,7 @@ if __name__ == "__main__":
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
 
-    dataset = EGD_GAN_Dataset(root_folder="/content/drive/MyDrive/EGD-Barcelona/split_by_label/train", 
+    dataset = EGD_GAN_Dataset(root_folder="/home/ndelafuente/CVC/EGD_Barcelona/GANs/ACA-GAN/EGD-Barcelona/split_by_label/train", 
                               transform=transform)
     
     print(dataset[34])  # Output will be (tensor(image), tensor(label))

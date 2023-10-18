@@ -1,0 +1,41 @@
+Downloading http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
+Downloading http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz to dataset/MNIST/raw/train-images-idx3-ubyte.gz
+Extracting dataset/MNIST/raw/train-images-idx3-ubyte.gz to dataset/MNIST/raw
+Downloading http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
+Downloading http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz to dataset/MNIST/raw/train-labels-idx1-ubyte.gz
+Extracting dataset/MNIST/raw/train-labels-idx1-ubyte.gz to dataset/MNIST/raw
+Downloading http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
+Downloading http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz to dataset/MNIST/raw/t10k-images-idx3-ubyte.gz
+Extracting dataset/MNIST/raw/t10k-images-idx3-ubyte.gz to dataset/MNIST/raw
+Downloading http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
+Downloading http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz to dataset/MNIST/raw/t10k-labels-idx1-ubyte.gz
+Extracting dataset/MNIST/raw/t10k-labels-idx1-ubyte.gz to dataset/MNIST/raw
+Epoch [0/5] Batch 0 / 469         				Loss D: 0.6930, Loss G: 0.7878
+100.0%
+100.0%
+100.0%
+100.0%
+Epoch [0/5] Batch 100 / 469         				Loss D: 0.0141, Loss G: 4.1721
+Epoch [0/5] Batch 200 / 469         				Loss D: 0.6515, Loss G: 0.7742
+Epoch [0/5] Batch 300 / 469         				Loss D: 0.5573, Loss G: 0.8004
+Epoch [0/5] Batch 400 / 469         				Loss D: 0.5479, Loss G: 1.1637
+Epoch [1/5] Batch 0 / 469         				Loss D: 0.6397, Loss G: 0.3885
+Epoch [1/5] Batch 100 / 469         				Loss D: 0.5479, Loss G: 0.9602
+Epoch [1/5] Batch 200 / 469         				Loss D: 0.5449, Loss G: 0.9835
+Epoch [1/5] Batch 300 / 469         				Loss D: 0.4981, Loss G: 0.9673
+Epoch [1/5] Batch 400 / 469         				Loss D: 0.5395, Loss G: 1.2328
+Epoch [2/5] Batch 0 / 469         				Loss D: 0.5066, Loss G: 1.1385
+Epoch [2/5] Batch 100 / 469         				Loss D: 0.4695, Loss G: 1.0376
+Epoch [2/5] Batch 200 / 469         				Loss D: 0.4682, Loss G: 0.5259
+Epoch [2/5] Batch 300 / 469         				Loss D: 0.3739, Loss G: 2.3748
+Epoch [2/5] Batch 400 / 469         				Loss D: 0.3610, Loss G: 2.0210
+Epoch [3/5] Batch 0 / 469         				Loss D: 0.4659, Loss G: 1.5603
+Epoch [3/5] Batch 100 / 469         				Loss D: 0.3783, Loss G: 2.8510
+Epoch [3/5] Batch 200 / 469         				Loss D: 0.3004, Loss G: 2.3142
+Epoch [3/5] Batch 300 / 469         				Loss D: 0.3114, Loss G: 2.6761
+Epoch [3/5] Batch 400 / 469         				Loss D: 0.3991, Loss G: 3.5100
+Epoch [4/5] Batch 0 / 469         				Loss D: 0.2051, Loss G: 2.6622
+Epoch [4/5] Batch 100 / 469         				Loss D: 0.3460, Loss G: 3.5089
+Epoch [4/5] Batch 200 / 469         				Loss D: 0.3188, Loss G: 2.1122
+Epoch [4/5] Batch 300 / 469         				Loss D: 0.2728, Loss G: 2.0542
+Epoch [4/5] Batch 400 / 469         				Loss D: 0.3247, Loss G: 2.2709

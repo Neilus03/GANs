@@ -10,7 +10,12 @@ import torch.optim as optim
 import torchvision.datasets as D
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter  # to print to tensorboard
+
+import wandb
 from model import Discriminator, Generator, initialize_weights
+
+
+wandb.init(project='train_DC-GAN', entity='neildlf')
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -83,6 +88,8 @@ for epoch in range(NUM_EPOCHS):
         loss_gen.backward(retain_graph=True)
         opt_gen.step()
         
+        wandb.log({"Loss D": loss_disc, "Loss G": loss_gen})
+        
         #Print losses occasionally and print to tensorboard
         if batch_idx % 100 == 0:
             print(
@@ -101,6 +108,11 @@ for epoch in range(NUM_EPOCHS):
 				)
                 
                 writer_real.add_image('Real', img_grid_real, global_step=step)
+                wandb.log({"Real": [wandb.Image(img_grid_real, caption="Real")]})
                 writer_fake.add_image('Fake', img_grid_fake, global_step=step)
+                wandb.log({"Fake": [wandb.Image(img_grid_fake, caption="Fake")]})
             
             step += 1
+            
+
+wandb.finish()

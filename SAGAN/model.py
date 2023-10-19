@@ -43,19 +43,19 @@ class Generator(nn.Module):
             nn.BatchNorm2d(256),  # [B, 256, 70, 80]
             nn.ReLU(True),  # [B, 256, 70, 80]
             
-            #SelfAttention(256),  #  [B, 256, 70, 80] , let it commented for easier computation while trying to know if matches sizes
+            SelfAttention(256),  #  [B, 256, 70, 80] , let it commented for easier computation while trying to know if matches sizes
             
             nn.ConvTranspose2d(256, 128, kernel_size=4, stride=2, padding=1),  #[B, 128, 140, 160] 
             nn.BatchNorm2d(128),  #[B, 128, 140, 160]
             nn.ReLU(True),  # [B, 128, 140, 160]
 
-            #SelfAttention(128),  #  [B, 128, 140, 160] , let it commented for easier computation while trying to know if matches sizes
+            SelfAttention(128),  #  [B, 128, 140, 160] , let it commented for easier computation while trying to know if matches sizes
             
             nn.ConvTranspose2d(128, 64, kernel_size=4, stride=2, padding=1),  # [B, 64, 280, 320] 
             nn.BatchNorm2d(64), # [B, 64, 280, 320]
             nn.ReLU(True),  # [B, 64, 280, 320]
 
-            #SelfAttention(64),  # [B, 64, 280, 320] , let it commented for easier computation while trying to know if matches sizes
+            SelfAttention(64),  # [B, 64, 280, 320] , let it commented for easier computation while trying to know if matches sizes
             
             #Last layer 
             nn.ConvTranspose2d(64, 3, kernel_size=4, stride=2, padding=1),  # [B, 3, 560, 640]

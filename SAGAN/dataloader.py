@@ -44,11 +44,11 @@ if __name__ == "__main__":
         #transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
 
-    dataset = EGD_SAGAN_Dataset(root_folder="/home/ndelafuente/CVC/EGD_Barcelona/GANs/ACA-GAN/EGD-Barcelona/split_by_label/train/0", 
-                              transform=transform, label = 0)
+    dataset = EGD_SAGAN_Dataset(root_folder="/home/ndelafuente/CVC/EGD_Barcelona/GANs/ACA-GAN/EGD-Barcelona/split_by_label/train/2", 
+                              transform=transform, label = 2)
     
     print(dataset[15])  # Output will be (tensor(image), tensor(label))
-    image_tensor, label_tensor = dataset[15]
+    image_tensor, label_tensor = dataset[6]
     image_array = np.transpose(image_tensor.numpy(), (1, 2, 0)) 
     plt.imshow(image_array)
     plt.show()

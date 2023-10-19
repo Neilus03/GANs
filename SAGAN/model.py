@@ -43,19 +43,19 @@ class Generator(nn.Module):
             nn.BatchNorm2d(256),  # [B, 256, 70, 80]
             nn.ReLU(True),  # [B, 256, 70, 80]
             
-            SelfAttention(256),  #  [B, 256, 70, 80] , let it commented for easier computation while trying to know if matches sizes
+            #SelfAttention(256),  #  [B, 256, 70, 80] , let it commented for easier computation while trying to know if matches sizes
             
             nn.ConvTranspose2d(256, 128, kernel_size=4, stride=2, padding=1),  #[B, 128, 140, 160] 
             nn.BatchNorm2d(128),  #[B, 128, 140, 160]
             nn.ReLU(True),  # [B, 128, 140, 160]
 
-            SelfAttention(128),  #  [B, 128, 140, 160] , let it commented for easier computation while trying to know if matches sizes
+            #SelfAttention(128),  #  [B, 128, 140, 160] , let it commented for easier computation while trying to know if matches sizes
             
             nn.ConvTranspose2d(128, 64, kernel_size=4, stride=2, padding=1),  # [B, 64, 280, 320] 
             nn.BatchNorm2d(64), # [B, 64, 280, 320]
             nn.ReLU(True),  # [B, 64, 280, 320]
 
-            SelfAttention(64),  # [B, 64, 280, 320] , let it commented for easier computation while trying to know if matches sizes
+            #SelfAttention(64),  # [B, 64, 280, 320] , let it commented for easier computation while trying to know if matches sizes
             
             #Last layer 
             nn.ConvTranspose2d(64, 3, kernel_size=4, stride=2, padding=1),  # [B, 3, 560, 640]
@@ -96,25 +96,25 @@ class Discriminator(nn.Module):
             nn.BatchNorm2d(64),  # [B, 64, 280, 320]   #comment or uncomment batch norm of discriminator based on experiments
             nn.LeakyReLU(0.2), # [B, 64, 280, 320] 
             
-            SelfAttention(64),  # [B, 64, 280, 320]   # let it commented for easier computation while trying to know if matches sizes
+            #SelfAttention(64),  # [B, 64, 280, 320]   # let it commented for easier computation while trying to know if matches sizes
             
             nn.Conv2d(64, 128, kernel_size=4, stride=2, padding=1), #[B, 128, 140, 160] 
             nn.BatchNorm2d(128), #[B, 128, 140, 160]  #comment or uncomment batch norm of discriminator based on experiments
             nn.LeakyReLU(0.2), #[B, 128, 140, 160] 
             
-            SelfAttention(128), #[B, 128, 140, 160] # let it commented for easier computation while trying to know if matches sizes
+            #SelfAttention(128), #[B, 128, 140, 160] # let it commented for easier computation while trying to know if matches sizes
             
             nn.Conv2d(128, 256, kernel_size=4, stride=2, padding=1),  # [B, 256, 70, 80]
             nn.BatchNorm2d(256), # [B, 256, 70, 80]  #comment or uncomment batch norm of discriminator based on experiments
             nn.LeakyReLU(0.2), # [B, 256, 70, 80]
 
-            SelfAttention(256), # [B, 256, 70, 80] # let it commented for easier computation while trying to know if matches sizes
+            #SelfAttention(256), # [B, 256, 70, 80] # let it commented for easier computation while trying to know if matches sizes
             
             nn.Conv2d(256, 512, kernel_size=4, stride=2, padding=1), # [B, 512 * 35 * 40]
             nn.BatchNorm2d(512),  # [B, 512 * 35 * 40]  #comment or uncomment batch norm of discriminator based on experiments
             nn.LeakyReLU(0.2),  # [B, 512 * 35 * 40]
 
-            SelfAttention(512),  # [B, 512 * 35 * 40] # let it commented for easier computation while trying to know if matches sizes
+            #SelfAttention(512),  # [B, 512 * 35 * 40] # let it commented for easier computation while trying to know if matches sizes
             
             
             nn.Conv2d(512, 1, kernel_size=4, stride=1, padding=0) # [B, 512 * 32 * 37]
@@ -153,8 +153,7 @@ if __name__ == "__main__":
     # Define dimensions and hyperparameters
     noise_dim = 100
  
-    batch_size = 2
-
+    batch_size = 8
     # Initialize models
     generator = Generator(noise_dim).to(device)
     discriminator = Discriminator().to(device)

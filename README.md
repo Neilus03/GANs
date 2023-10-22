@@ -41,7 +41,7 @@ The repository is organized into two main sections:
 
 4. Or, if you're interested in the simpler GAN, navigate to the simple_gan folder:
    ```
-   cd simple_gan
+   cd simple_gan 
    ```
 
 5. And train the simple GAN:

@@ -7,7 +7,7 @@
 
 Welcome to this GAN repository where we venture into the mesmerizing world of Generative Adversarial Networks. If you're passionate about GANs, this is the place for you!
 
----
+--- 
 
 ## Structure 📂
 

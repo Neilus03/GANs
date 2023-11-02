@@ -22,19 +22,19 @@ transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.RandomHorizontalFlip(p=0.5),
     transforms.RandomVerticalFlip(p=0.5),
-    transforms.RandomRotation(degrees=90),
-    transforms.RandomPerspective(distortion_scale=0.5, p=0.5),
+    transforms.RandomRotation(degrees=10),
+    #transforms.RandomPerspective(distortion_scale=0.5, p=0.5),
     #transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
 # Create dataset instance
-dataset = EGD_SAGAN_Dataset(root_folder="/home/ndelafuente/CVC/EGD_Barcelona/GANs/ACA-GAN/EGD-Barcelona/split_by_label/train/2",
+dataset = EGD_SAGAN_Dataset(root_folder="/home/ndelafuente/CVC/GANs/split_by_label/train/2",
                           transform=transform)
 
 # Hyperparameters
-batch_size = 8
-lr = 3e-3
-noise_dim = 200
+batch_size = 4
+lr = 3e-4
+noise_dim = 1000
 num_epochs = 200
 
 # Initialize models and move to device
@@ -43,17 +43,20 @@ wandb.watch(generator)
 discriminator = Discriminator().to(device)
 wandb.watch(discriminator)
 
-''' Some problems with the initialization of the weights due to dimension of tensors
+''' Some problems with the initialization of the weights due to dimension of tensors'''
 # Xavier initialization for generator weights
 for name, param in generator.named_parameters():
     if 'weight' in name:
-        init.xavier_uniform(param)
+        if len(param.size()) > 1:
+            init.xavier_uniform_(param)
 
 # Xavier initialization for discriminator weights
 for name, param in discriminator.named_parameters():
     if 'weight' in name:
-        init.xavier_uniform(param)
-'''
+        if len(param.size()) > 1:
+            init.xavier_uniform_(param)
+
+
 
 # Optimizers
 optimizer_G = torch.optim.Adam(generator.parameters(), lr=lr)
@@ -66,13 +69,13 @@ adversarial_loss = torch.nn.BCELoss().to(device)
 train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 # Create directory to save generated images
-save_dir = "/home/ndelafuente/CVC/EGD_Barcelona/GANs/ACA-GAN/generated_images"
+save_dir = "/home/ndelafuente/CVC/GANs/SAGAN/generated_images"
 os.makedirs(save_dir, exist_ok=True)
 
 # Training loop
 for epoch in range(num_epochs):
     for i, (imgs, labels) in enumerate(train_loader):
-        for _ in range(10): #train n times the generator for each time you train the discriminator
+        for _ in range(5): #train n times the generator for each time you train the discriminator
 
             # Get the current batch size
             cur_batch_size = len(imgs)
@@ -168,6 +171,5 @@ for epoch in range(num_epochs):
 
 wandb.finish()
 
-import torch.nn.init as init
 
 

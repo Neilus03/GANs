@@ -9,7 +9,7 @@ Welcome to this GAN repository where we venture into the mesmerizing world of Ge
 
 --- 
 
-## Structure 📂
+## Structure 📂 
 
 The repository is organized into two main sections:
 

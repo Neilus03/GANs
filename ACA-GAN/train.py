@@ -9,7 +9,7 @@ import os
 import wandb
 
 
-# Initialize wandb
+# Initialize wandb 
 wandb.init(project='train_ACA-GAN', entity='neildlf')
 
 # Initialize device

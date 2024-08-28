@@ -1,7 +1,6 @@
 """
 Discriminator and Generator implementation from DCGAN paper,
-with removed Sigmoid() as output from Discriminator (and therefor
-it should be called critic)
+with removed Sigmoid() as output from Discriminator (and therefore it should be called critic)
 """
 import torch
 import torch.nn as nn

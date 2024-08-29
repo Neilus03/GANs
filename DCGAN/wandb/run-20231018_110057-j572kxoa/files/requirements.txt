@@ -68,7 +68,7 @@ sympy==1.11.1
 tensorboard-data-server==0.7.1
 tensorboard==2.14.1
 torch-tb-profiler==0.4.3
-torch==2.1.0
+torch==2.2.0
 torchvision==0.16.0
 triton==2.1.0
 typing-extensions==4.7.1
